@@ -1,0 +1,51 @@
+{"level":"error","message":"Помилка реєстрації користувача: crypto.randomBytes is not a function","timestamp":"2024-11-10T00:41:35.294Z"}
+{"level":"error","message":"Помилка реєстрації користувача: Missing credentials for \"PLAIN\"","timestamp":"2024-11-10T00:43:57.780Z"}
+{"level":"warn","message":"Користувач з такою електронною поштою вже існує: urthyk1234@gmail.com","timestamp":"2024-11-10T00:45:43.886Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T00:47:55.990Z"}
+{"level":"info","message":"Запит на вхід для користувача: Yuri","timestamp":"2024-11-10T00:59:07.911Z"}
+{"level":"info","message":"Користувач Yuri успішно увійшов","timestamp":"2024-11-10T00:59:08.097Z"}
+{"level":"info","message":"Користувач успішно вийшов із системи","timestamp":"2024-11-10T01:10:42.297Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T22:50:07.175Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:01:46.232Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:05:28.748Z"}
+{"level":"warn","message":"Невірний або прострочений токен для електронної пошти: a44eccfd46d2b6eb66ec469b7c970b12a3b7ed75b7335ed2b81649e2c76508fc","timestamp":"2024-11-10T23:06:11.789Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:16:33.179Z"}
+{"level":"info","message":"Електронна пошта успішно підтверджена для urthyk1234@gmail.com","timestamp":"2024-11-10T23:16:50.416Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:26:49.907Z"}
+{"level":"info","message":"Електронна пошта успішно підтверджена для urthyk1234@gmail.com","timestamp":"2024-11-10T23:27:00.732Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:46:33.900Z"}
+{"level":"info","message":"Лист для підтвердження пошти успішно відправлений на urthyk1234@gmail.com","timestamp":"2024-11-10T23:47:32.563Z"}
+{"level":"info","message":"Лист для підтвердження пошти успішно відправлений на urthyk1234@gmail.com","timestamp":"2024-11-10T23:47:43.310Z"}
+{"level":"info","message":"Лист для підтвердження пошти успішно відправлений на urthyk1234@gmail.com","timestamp":"2024-11-10T23:51:09.077Z"}
+{"level":"info","message":"Лист для підтвердження пошти успішно відправлений на urthyk1234@gmail.com","timestamp":"2024-11-10T23:52:23.846Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:52:56.520Z"}
+{"level":"info","message":"Лист для підтвердження пошти успішно відправлений на urthyk1234@gmail.com","timestamp":"2024-11-10T23:56:44.847Z"}
+{"level":"info","message":"Електронна пошта успішно підтверджена для urthyk1234@gmail.com","timestamp":"2024-11-10T23:56:52.955Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: urthyk1234@gmail.com","timestamp":"2024-11-10T23:58:29.956Z"}
+{"level":"info","message":"Лист для підтвердження пошти успішно відправлений на urthyk1234@gmail.com","timestamp":"2024-11-11T00:00:34.420Z"}
+{"level":"info","message":"Електронна пошта успішно підтверджена для urthyk1234@gmail.com","timestamp":"2024-11-11T00:00:41.283Z"}
+{"level":"warn","message":"Користувач з таким ім'ям вже існує: Yurii","timestamp":"2024-11-11T15:56:18.486Z"}
+{"level":"info","message":"Користувач успішно зареєстрований: tarasyasinovskiy2006@gmail.com","timestamp":"2024-11-11T15:56:28.721Z"}
+{"level":"info","message":"Запит на вхід для користувача: Yurii","timestamp":"2024-11-11T15:58:19.817Z"}
+{"level":"info","message":"Користувач Yurii успішно увійшов","timestamp":"2024-11-11T15:58:20.071Z"}
+{"level":"info","message":"Запит на вхід для користувача: Yurii","timestamp":"2024-11-11T16:07:29.724Z"}
+{"level":"info","message":"Користувач Yurii успішно увійшов","timestamp":"2024-11-11T16:07:29.910Z"}
+{"level":"info","message":"Список користувачів успішно отримано.","timestamp":"2024-11-11T16:08:33.284Z"}
+{"level":"info","message":"Адміністратор з ID 8 змінив роль користувача з ID 9 на manager.","timestamp":"2024-11-11T16:09:41.710Z"}
+{"level":"info","message":"Адміністратор з ID 8 змінив роль користувача з ID 9 на user.","timestamp":"2024-11-11T16:09:58.530Z"}
+{"level":"info","message":"Запит на вхід для користувача: Taras","timestamp":"2024-11-11T18:06:55.092Z"}
+{"level":"info","message":"Користувач Taras успішно увійшов","timestamp":"2024-11-11T18:06:55.279Z"}
+{"level":"error","message":"Помилка при м'якому видаленні акаунта: Cannot read properties of undefined (reading 'id')","timestamp":"2024-11-11T18:07:35.901Z"}
+{"level":"info","message":"Користувач 9 успішно м'яко видалений.","timestamp":"2024-11-11T18:08:28.952Z"}
+{"level":"error","message":"Помилка при відновленні акаунта: Cannot read properties of undefined (reading 'id')","timestamp":"2024-11-11T18:11:47.305Z"}
+{"level":"info","message":"Користувач 9 успішно відновлений.","timestamp":"2024-11-11T18:12:14.508Z"}
+{"level":"info","message":"Користувач 9 успішно м'яко видалений.","timestamp":"2024-11-11T18:12:34.229Z"}
+{"level":"info","message":"Користувач 9 успішно відновлений.","timestamp":"2024-11-11T18:15:27.874Z"}
+{"level":"info","message":"Користувач 9 успішно м'яко видалений.","timestamp":"2024-11-11T18:15:39.542Z"}
+{"level":"info","message":"Користувач 9 успішно відновлений.","timestamp":"2024-11-11T18:21:31.964Z"}
+{"level":"info","message":"Користувач 9 успішно м'яко видалений.","timestamp":"2024-11-11T18:21:36.073Z"}
+{"level":"info","message":"Користувач успішно вийшов із системи","timestamp":"2024-11-11T20:28:33+02:00"}
+{"level":"info","message":"Запит на вхід для користувача: Taras","timestamp":"2024-11-11T20:28:39+02:00"}
+{"level":"info","message":"Користувач Taras успішно увійшов","timestamp":"2024-11-11T20:28:40+02:00"}
+{"level":"info","message":"Користувач 9 успішно відновлений.","timestamp":"2024-11-11T20:29:10+02:00"}
+{"level":"info","message":"Користувач 9 успішно м'яко видалений.","timestamp":"2024-11-11T20:29:13+02:00"}

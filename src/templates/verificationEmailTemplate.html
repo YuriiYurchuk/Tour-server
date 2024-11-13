@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Підтвердження електронної пошти</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif !important;
+        background-color: #f9f9f9 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #333 !important;
+      }
+      .container {
+        max-width: 800px !important;
+        margin: 20px auto !important;
+        background-color: #ffffff !important;
+        padding: 20px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1) !important;
+      }
+      .header {
+        background-image: linear-gradient(
+          to right,
+          #ff5e62,
+          #ff9966
+        ) !important;
+        color: #ffffff !important;
+        padding: 15px 0 !important;
+        text-align: center !important;
+        border-radius: 8px 8px 0 0 !important;
+      }
+      .header h1 {
+        margin: 0 !important;
+        font-size: 26px !important;
+        font-weight: bold !important;
+      }
+      .content {
+        margin: 20px 0 !important;
+      }
+      .content p {
+        font-size: 18px !important;
+        line-height: 1.8 !important;
+        color: #333 !important;
+      }
+      .button-container {
+        text-align: center !important;
+        margin: 30px 0 !important;
+      }
+      .link {
+        background-color: #ff5e62 !important;
+        color: #ffffff !important;
+        padding: 12px 24px !important;
+        border-radius: 30px !important;
+        text-decoration: none !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        display: inline-block !important;
+      }
+      .link:hover {
+        background-color: #ff9966 !important;
+      }
+      .footer {
+        text-align: center !important;
+        font-size: 14px !important;
+        color: #777 !important;
+        margin-top: 20px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Підтвердження електронної пошти</h1>
+      </div>
+      <div class="content">
+        <p>Шановний мандрівнику,</p>
+        <p>
+          Дякуємо, що обрали нашу туристичну компанію для організації вашої
+          подорожі! Щоб завершити процес реєстрації та отримати доступ до
+          ексклюзивних пропозицій і персоналізованих турів, будь ласка,
+          підтвердіть свою електронну пошту, натиснувши на посилання нижче.
+        </p>
+      </div>
+      <div class="button-container">
+        <a href="{{verificationUrl}}" class="link"
+          >Підтвердити електронну пошту</a
+        >
+      </div>
+      <div class="content">
+        <p>
+          Якщо ви не здійснювали реєстрацію на нашому сайті, просто ігноруйте
+          цей лист. Ми з нетерпінням чекаємо на можливість допомогти вам втілити
+          ваші мрії про подорожі в реальність!
+        </p>
+      </div>
+      <div class="footer">
+        <p>&copy; 2024 Ваша туристична компанія. Всі права захищені.</p>
+      </div>
+    </div>
+  </body>
+</html>
