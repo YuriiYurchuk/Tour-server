@@ -2,7 +2,7 @@ const ContactForm = require("../models/ContactForm");
 const logger = require("../config/logger");
 
 // Функція додавання нового запису у контактну форму
-async function createContactForm(req, res) {
+const createContactForm = async (req, res) => {
   try {
     const { name, phone_number } = req.body;
 
@@ -52,10 +52,10 @@ async function createContactForm(req, res) {
       .status(500)
       .json({ error: "Не вдалося додати запис до контактної форми" });
   }
-}
+};
 
 // Функція видалення запису з контактної форми
-async function deleteContactForm(req, res) {
+const deleteContactForm = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -80,6 +80,6 @@ async function deleteContactForm(req, res) {
       .status(500)
       .json({ error: "Не вдалося видалити запис з контактної форми" });
   }
-}
+};
 
 module.exports = { createContactForm, deleteContactForm };

@@ -3,7 +3,7 @@ const logger = require("../config/logger");
 const { Op } = require("sequelize");
 
 // Функція для м'якого видалення акаунта
-async function softDeleteUser(req, res) {
+const softDeleteUser = async (req, res) => {
   try {
     const userId = req.user.id; // Отримуємо id користувача із токена
     const user = await User.findByPk(userId); // Пошук користувача в базі даних
@@ -32,10 +32,10 @@ async function softDeleteUser(req, res) {
       .status(500)
       .json({ message: "Помилка при м'якому видаленні акаунта." });
   }
-}
+};
 
 // Функція для відновлення акаунта після м'якого видалення
-async function restoreUser(req, res) {
+const restoreUser = async (req, res) => {
   try {
     const userId = req.user.id; // Отримуємо id користувача із токена
     const user = await User.findByPk(userId);
@@ -72,10 +72,10 @@ async function restoreUser(req, res) {
       .status(500)
       .json({ message: "Помилка при відновленні акаунта." });
   }
-}
+};
 
 // Функція для остаточного видалення акаунтів після 30 днів
-async function permanentlyDeleteUser() {
+const permanentlyDeleteUser = async () => {
   try {
     // Визначаємо порогову дату для видалення (30 днів тому)
     const thresholdDate = new Date();
@@ -104,6 +104,6 @@ async function permanentlyDeleteUser() {
       `Помилка при остаточному видаленні акаунтів: ${error.message}`
     );
   }
-}
+};
 
 module.exports = { softDeleteUser, restoreUser, permanentlyDeleteUser };

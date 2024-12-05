@@ -68,6 +68,10 @@ const Hotels = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    total_orders: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "hotels",
@@ -75,5 +79,6 @@ const Hotels = sequelize.define(
     underscored: true,
   }
 );
+
 
 module.exports = Hotels;

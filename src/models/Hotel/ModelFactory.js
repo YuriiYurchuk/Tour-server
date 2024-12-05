@@ -23,7 +23,7 @@ function createHotelModel(modelName, tableName) {
       },
       description: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

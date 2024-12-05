@@ -1,43 +1,54 @@
+const fs = require("fs");
+const path = require("path");
 const User = require("../models/User");
 const logger = require("../config/logger");
+const crypto = require("crypto");
+const { sendVerificationEmail } = require("../utils/mailer");
 
 // Функція оновлення даних користувача
-async function updateUser(req, res) {
+const updateUser = async (req, res) => {
   try {
-    // Отримуємо id користувача, який виконує запит, з токена
     const userId = req.user.id;
-    // Деструктуризація даних з тіла запиту (дані для оновлення)
-    const { first_name, last_name, avatar_url, email } = req.body;
+    const { first_name, last_name, email } = req.body;
+    let avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : null;
 
-    // Перевірка, чи вказано хоча б одне поле для оновлення
-    if (!first_name && !last_name && !avatar_url && !email) {
+    if (!first_name && !last_name && !avatarUrl && !email) {
       logger.warn(`Користувач ${userId} не надав даних для оновлення.`);
       return res
         .status(400)
         .json({ message: "Будь ласка, надайте дані для оновлення." });
     }
 
-    // Знаходимо користувача по id
     const user = await User.findByPk(userId);
     if (!user) {
       logger.warn(`Користувача з id ${userId} не знайдено.`);
       return res.status(404).json({ message: "Користувача не знайдено." });
     }
 
-    // Перевірка, чи підтверджена електронна пошта
-    if (!user.email_verified) {
-      logger.warn(`Користувач ${userId} не підтвердив свою електронну пошту.`);
-      return res.status(400).json({
-        message: "Ваша електронна пошта не підтверджена. Оновлення неможливе.",
-      });
-    }
-
-    // Оновлення даних користувача
     if (first_name) user.first_name = first_name;
     if (last_name) user.last_name = last_name;
-    if (avatar_url) user.avatar_url = avatar_url;
-    if (email) {
-      // Перевірка, чи електронна пошта вже використовується іншим користувачем
+    if (avatarUrl) {
+      // Видаляємо старий файл, якщо він існує
+      if (user.avatar_url) {
+        const oldAvatarPath = path.join(
+          __dirname,
+          "../../uploads/avatars",
+          user.avatar_url
+        );
+        fs.unlink(oldAvatarPath, (err) => {
+          if (err) {
+            logger.warn(`Не вдалося видалити старий аватар: ${err.message}`);
+          } else {
+            logger.info(`Старий аватар видалено: ${oldAvatarPath}`);
+          }
+        });
+      }
+
+      // Оновлюємо новий аватар
+      user.avatar_url = avatarUrl;
+    }
+
+    if (email && email !== user.email) {
       const existingEmail = await User.findOne({ where: { email } });
       if (existingEmail) {
         logger.warn(`Електронна пошта ${email} вже використовується.`);
@@ -45,25 +56,35 @@ async function updateUser(req, res) {
           .status(409)
           .json({ message: "Ця електронна пошта вже використовується." });
       }
+
+      // Генеруємо новий токен для підтвердження
+      const email_verification_token = crypto.randomBytes(32).toString("hex");
+
+      // Оновлюємо електронну пошту та статус верифікації
       user.email = email;
+      user.email_verified = false;
+      user.email_verification_token = email_verification_token;
+
+      // Надсилаємо новий лист для підтвердження
+      await sendVerificationEmail(email, email_verification_token);
+
+      logger.info(
+        `Користувач ${userId} оновив електронну адресу. Верифікація потрібна повторно.`
+      );
     }
 
-    // Збереження оновлених даних в базі
     await user.save();
-
-    // Логування успішного оновлення даних
     logger.info(`Користувач ${userId} успішно оновив свої дані.`);
     res
       .status(200)
       .json({ message: "Дані користувача успішно оновлені", user });
   } catch (error) {
-    // Логування помилки при оновленні даних
     logger.error(`Помилка при оновленні даних користувача: ${error.message}`);
     res.status(500).json({ message: "Помилка оновлення даних користувача" });
   }
-}
+};
 
-async function getUsers(req, res) {
+const getUsers = async (req, res) => {
   try {
     // Отримуємо всіх користувачів, вибираючи тільки id, username, email і role
     const users = await User.findAll({
@@ -89,10 +110,10 @@ async function getUsers(req, res) {
       .status(500)
       .json({ message: "Помилка при отриманні користувачів." });
   }
-}
+};
 
 // Функція для оновлення ролі користувача
-async function updateUserRole(req, res) {
+const updateUserRole = async (req, res) => {
   try {
     // Отримуємо id адміністратора та нову роль з тіла запиту
     const adminId = req.user.id;
@@ -138,6 +159,6 @@ async function updateUserRole(req, res) {
       .status(500)
       .json({ message: "Помилка при зміні ролі користувача." });
   }
-}
+};
 
 module.exports = { updateUser, getUsers, updateUserRole };

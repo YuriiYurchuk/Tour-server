@@ -4,7 +4,7 @@ const { sendVerificationEmail } = require("../utils/mailer");
 const logger = require("../config/logger");
 
 // Підтвердження електронної пошти користувача
-async function verifyEmail(req, res) {
+const verifyEmail = async (req, res) => {
   try {
     // Отримуємо токен з запиту
     const { token } = req.query;
@@ -45,10 +45,10 @@ async function verifyEmail(req, res) {
       .status(500)
       .json({ message: "Помилка підтвердження електронної пошти" });
   }
-}
+};
 
 // Функція для повторного відправлення листа з підтвердженням електронної пошти
-async function resendVerificationEmail(req, res) {
+const resendVerificationEmail = async (req, res) => {
   try {
     // Отримуємо електронну адресу з тіла запиту
     const { email } = req.body;
@@ -109,6 +109,6 @@ async function resendVerificationEmail(req, res) {
         "Помилка при повторному відправленні листа для підтвердження пошти",
     });
   }
-}
+};
 
 module.exports = { verifyEmail, resendVerificationEmail };

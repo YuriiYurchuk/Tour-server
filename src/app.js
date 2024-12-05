@@ -5,17 +5,26 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const moment = require("moment-timezone");
 const sequelize = require("./config/database");
-const authRoutes = require("./routes/auth");
-const emailRoutes = require("./routes/emailVerification");
+const authRoutes = require("./routes/authRoutes");
+const emailRoutes = require("./routes/emailVerificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriberRoutes = require("./routes/subscribersRoutes");
+const hotelRoutes = require("./routes/hotelRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
+const associationsBooking = require("./models/associationsBooking");
+const associationsHotel = require("./models/associationsHotel");
 
 const app = express();
 
+associationsBooking(); // Виклик асоціацій моделей пов'язаних з букінгом
+associationsHotel(); // Виклик асоціацій моделей пов'язаних з готелем
+
 moment.tz.setDefault("Europe/Kiev");
 
-require("./jobs/clearExpiredTokens");
-require("./jobs/accountCleanupJob");
+require("./jobs/clearExpiredTokensCorn");
+require("./jobs/accountCleanupCorn");
+require("./jobs/updateHotDealsCron");
+require("./jobs/bookingStatusCron");
 
 app.use(express.static(path.join(__dirname, "templates")));
 app.use(cors());
@@ -23,11 +32,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/images", express.static("images"));
+app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/subscribers", subscriberRoutes);
+app.use("/api/hotel", hotelRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 const PORT = process.env.PORT || 5000;
 sequelize

@@ -1,0 +1,231 @@
+const { Op } = require("sequelize");
+const models = require("../../models/Hotel/models");
+const logger = require("../../config/logger");
+
+// Константа з атрибутами, які витягуються з бази
+const HOTEL_ATTRIBUTES = [
+  "id",
+  "name",
+  "country",
+  "star_rating",
+  "description",
+  "is_hot_deal",
+  "tour_start_date",
+  "tour_end_date",
+  "tour_price",
+  "average_rating",
+  "review_count",
+  "included_meal_types",
+  "season",
+  "total_orders",
+];
+
+// Отримання параметрів пагінації з запиту
+const getPaginationParams = (query, defaultLimit = 8) => {
+  const page = parseInt(query.page, 10) || 1;
+  const limit = parseInt(query.limit, 10) || defaultLimit;
+  const offset = (page - 1) * limit;
+  return { page, limit, offset };
+};
+
+// Побудова фільтрів для бази даних
+const buildFilters = (query, isHotDeal = null) => {
+  const filters = {};
+  if (isHotDeal !== null) filters.is_hot_deal = isHotDeal;
+  if (query.season) filters.season = query.season;
+  if (query.amenities || query.mealType) {
+    filters.included_meal_types = {
+      [Op.like]: `%${query.amenities || query.mealType}%`,
+    };
+  }
+  if (query.starRating) filters.star_rating = parseInt(query.starRating, 10);
+  return filters;
+};
+
+// Побудова параметрів сортування для бази даних
+const getSortParams = (query) => {
+  if (query.sortBy && query.sortOrder) {
+    return [[query.sortBy, query.sortOrder === "asc" ? "ASC" : "DESC"]];
+  }
+  return null;
+};
+
+// Очищення текстових полів готелю від зайвих символів
+const cleanHotelData = (hotel) => {
+  const cleanField = (field) => (field ? field.replace(/"/g, "") : field);
+  return {
+    ...hotel.dataValues,
+    name: cleanField(hotel.name),
+    country: cleanField(hotel.country),
+    description: cleanField(hotel.description),
+    included_meal_types: cleanField(hotel.included_meal_types),
+    season: cleanField(hotel.season),
+  };
+};
+
+// Загальна функція для запитів до бази даних
+const fetchHotelsData = async ({ filters, sort, limit, offset }) => {
+  const { count, rows } = await models.Hotels.findAndCountAll({
+    attributes: HOTEL_ATTRIBUTES,
+    where: filters,
+    order: sort,
+    limit,
+    offset,
+  });
+
+  return {
+    count,
+    hotels: rows.map(cleanHotelData),
+  };
+};
+
+// Відправлення відповіді на клієнт
+const sendResponse = (res, statusCode, data) => {
+  res.status(statusCode).json(data);
+};
+
+// Обробка запиту для отримання всіх готелів
+const getAllHotels = async (req, res) => {
+  try {
+    const { page, limit, offset } = getPaginationParams(req.query);
+    const filters = buildFilters(req.query);
+
+    logger.info(`Отримання готелів: сторінка ${page}, ліміт ${limit}`);
+    const { count, hotels } = await fetchHotelsData({
+      filters,
+      sort: getSortParams(req.query),
+      limit,
+      offset,
+    });
+
+    sendResponse(res, 200, {
+      hotels,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      totalHotels: count,
+    });
+  } catch (error) {
+    logger.error("Помилка при отриманні готелів: ", error.message);
+    sendResponse(res, 500, {
+      error: "Не вдалося отримати список готелів",
+      details: error.message,
+    });
+  }
+};
+
+// Обробка запиту для отримання гарячих турів
+const getHotDeals = async (req, res) => {
+  try {
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    logger.info(`Отримання гарячих турів: сторінка ${page}, ліміт ${limit}`);
+    const { count, hotels } = await fetchHotelsData({
+      filters: buildFilters(req.query, true),
+      sort: getSortParams(req.query),
+      limit,
+      offset,
+    });
+
+    sendResponse(res, 200, {
+      hotDeals: hotels,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      totalHotDeals: count,
+    });
+  } catch (error) {
+    logger.error("Помилка при отриманні гарячих турів: ", error.message);
+    sendResponse(res, 500, {
+      error: "Не вдалося отримати гарячі тури",
+      details: error.message,
+    });
+  }
+};
+
+// Обробка запиту для отримання топ-готелів за замовленнями
+const getTopHotels = async (req, res) => {
+  try {
+    logger.info("Отримання топ-10 готелів за кількістю замовлень");
+
+    const { hotels } = await fetchHotelsData({
+      filters: {},
+      sort: [["total_orders", "DESC"]],
+      limit: 10,
+      offset: 0,
+    });
+
+    sendResponse(res, 200, {
+      topHotels: hotels,
+      total: hotels.length,
+    });
+  } catch (error) {
+    logger.error("Помилка при отриманні топ-10 готелів: ", error.message);
+    sendResponse(res, 500, {
+      error: "Не вдалося отримати топ-10 готелів",
+      details: error.message,
+    });
+  }
+};
+
+// Обробка запиту для отримання топ-готелів за рейтингом
+const getTopRatedHotels = async (req, res) => {
+  try {
+    logger.info("Отримання топ-10 готелів за рейтингом");
+
+    const { hotels } = await fetchHotelsData({
+      filters: {},
+      sort: [["average_rating", "DESC"]],
+      limit: 10,
+      offset: 0,
+    });
+
+    sendResponse(res, 200, {
+      topRatedHotels: hotels,
+      total: hotels.length,
+    });
+  } catch (error) {
+    logger.error(
+      "Помилка при отриманні топ-10 готелів за рейтингом: ",
+      error.message
+    );
+    sendResponse(res, 500, {
+      error: "Не вдалося отримати топ-10 готелів за рейтингом",
+      details: error.message,
+    });
+  }
+};
+
+// Обробка запиту для отримання топ-гарячих готелів
+const getTopHotDeals = async (req, res) => {
+  try {
+    logger.info("Отримання топ-10 гарячих готелів");
+
+    const { hotels } = await fetchHotelsData({
+      filters: { is_hot_deal: true },
+      sort: [["tour_price", "ASC"]],
+      limit: 10,
+      offset: 0,
+    });
+
+    sendResponse(res, 200, {
+      topHotDeals: hotels,
+      total: hotels.length,
+    });
+  } catch (error) {
+    logger.error(
+      "Помилка при отриманні топ-10 гарячих готелів: ",
+      error.message
+    );
+    sendResponse(res, 500, {
+      error: "Не вдалося отримати топ-10 гарячих готелів",
+      details: error.message,
+    });
+  }
+};
+
+module.exports = {
+  getAllHotels,
+  getHotDeals,
+  getTopHotels,
+  getTopRatedHotels,
+  getTopHotDeals,
+};

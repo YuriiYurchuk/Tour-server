@@ -1,5 +1,9 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database.js");
+const User = require("./User");
+const Hotel = require("./Hotel/Hotels");
+const HotelRoomType = require("./Hotel/HotelRoomTypes");
+const HotelMealType = require("./Hotel/HotelMealTypes");
 
 const Booking = sequelize.define(
   "Booking",
@@ -12,7 +16,7 @@ const Booking = sequelize.define(
     user_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "users",
+        model: User,
         key: "id",
       },
       onUpdate: "NO ACTION",
@@ -21,7 +25,7 @@ const Booking = sequelize.define(
     hotel_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "hotels",
+        model: Hotel,
         key: "id",
       },
       onUpdate: "NO ACTION",
@@ -30,7 +34,7 @@ const Booking = sequelize.define(
     room_type_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "hotel_room_types",
+        model: HotelRoomType,
         key: "id",
       },
       onUpdate: "NO ACTION",
@@ -39,7 +43,7 @@ const Booking = sequelize.define(
     meal_plan_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: "hotel_meal_types",
+        model: HotelMealType,
         key: "id",
       },
       onUpdate: "NO ACTION",
@@ -78,7 +82,7 @@ const Booking = sequelize.define(
       allowNull: false,
       defaultValue: "очікується",
       validate: {
-        isIn: [["очікується", "підтверджено", "скасовано"]],
+        isIn: [["очікується", "підтверджено", "скасовано", "завершено"]],
       },
     },
     last_modified: {
@@ -101,5 +105,6 @@ const Booking = sequelize.define(
     },
   }
 );
+
 
 module.exports = Booking;

@@ -40,4 +40,5 @@ const HotelMealTypes = sequelize.define(
   }
 );
 
+
 module.exports = HotelMealTypes;

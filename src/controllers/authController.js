@@ -8,7 +8,7 @@ const { sendVerificationEmail } = require("../utils/mailer");
 const logger = require("../config/logger");
 
 // Функція для реєстрації нового користувача
-async function register(req, res) {
+const register = async (req, res) => {
   try {
     // Отримуємо дані запиту
     const { username, email, password, first_name, last_name } = req.body;
@@ -50,7 +50,7 @@ async function register(req, res) {
       password_hash,
       first_name: first_name || null,
       last_name: last_name || null,
-      avatar_url: "/images/default-avatar.jpg",
+      avatar_url: "/uploads/avatars/default-avatar.jpg",
       email_verification_token,
     });
 
@@ -66,10 +66,10 @@ async function register(req, res) {
     console.error(error);
     res.status(500).json({ message: "Помилка реєстрації користувача" });
   }
-}
+};
 
 // Функція для входу користувача
-async function login(req, res) {
+const login = async (req, res) => {
   try {
     const { loginInput, password } = req.body;
     logger.info(`Запит на вхід для користувача: ${loginInput}`);
@@ -138,10 +138,10 @@ async function login(req, res) {
     logger.error(`Помилка при вході: ${error.message}`);
     res.status(500).json({ message: "Помилка входу" });
   }
-}
+};
 
 // Функція для оновлення access токена за допомогою refresh токена
-async function refreshToken(req, res) {
+const refreshToken = async (req, res) => {
   const { refreshToken } = req.cookies; // Отримуємо refresh токен з куків
 
   // Якщо refresh токен відсутній
@@ -189,10 +189,10 @@ async function refreshToken(req, res) {
     res.clearCookie("refreshToken"); // Видалення недійсного refresh токена
     res.status(403).json({ message: "Недійсний або прострочений токен" });
   }
-}
+};
 
 // Функція для виходу користувача
-async function logout(req, res) {
+const logout = async (req, res) => {
   const refreshToken = req.cookies ? req.cookies.refreshToken : null; // Отримуємо refresh токен з куків
 
   // Якщо refresh токен відсутній
@@ -214,7 +214,7 @@ async function logout(req, res) {
     logger.error(`Помилка при виході користувача: ${error.message}`);
     res.status(500).json({ message: "Помилка виходу" });
   }
-}
+};
 
 module.exports = {
   register,

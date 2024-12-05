@@ -48,4 +48,5 @@ const HotelRoomTypes = sequelize.define(
   }
 );
 
+
 module.exports = HotelRoomTypes;

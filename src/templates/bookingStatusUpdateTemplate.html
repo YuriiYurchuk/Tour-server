@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Оновлення статусу бронювання</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif !important;
+        background-color: #f9f9f9 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #333 !important;
+      }
+      .container {
+        max-width: 800px !important;
+        margin: 20px auto !important;
+        background-color: #ffffff !important;
+        padding: 20px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1) !important;
+      }
+      .header {
+        background-color: #4caf50 !important;
+        color: #ffffff !important;
+        padding: 15px 0 !important;
+        text-align: center !important;
+        border-radius: 8px 8px 0 0 !important;
+      }
+      .header h1 {
+        margin: 0 !important;
+        font-size: 28px !important;
+        font-weight: bold !important;
+      }
+      .content {
+        margin: 20px 0 !important;
+      }
+      .content p {
+        font-size: 18px !important;
+        line-height: 1.8 !important;
+        color: #333 !important;
+      }
+      .content .highlight {
+        font-weight: bold !important;
+        color: #4caf50 !important;
+      }
+      .footer {
+        text-align: center !important;
+        font-size: 14px !important;
+        color: #777 !important;
+        margin-top: 20px !important;
+      }
+      .footer p {
+        margin: 0 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Оновлення статусу вашого бронювання</h1>
+      </div>
+      <div class="content">
+        <p>Шановний {{userName}},</p>
+        <p>Ваше бронювання {{bookingId}} має новий статус:</p>
+        <p><span class="highlight">{{status}}</span></p>
+        <p>Дата початку: {{startDate}}</p>
+        <p>Дата завершення: {{endDate}}</p>
+        <p>
+          Для продовження заповнення ваших даних, будь ласка, перевірте ваш
+          аккаунт на нашому сайті.
+        </p>
+      </div>
+      <div class="footer">
+        <p>&copy; 2024 Ваша туристична компанія. Всі права захищені.</p>
+      </div>
+    </div>
+  </body>
+</html>

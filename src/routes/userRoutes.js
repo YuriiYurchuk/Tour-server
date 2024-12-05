@@ -6,9 +6,15 @@ const contactController = require("../controllers/contactFormController");
 const authenticateToken = require("../middlewares/authMiddleware");
 const checkAdminRole = require("../middlewares/checkAdminRole");
 const checkManagerRole = require("../middlewares/checkManagerRole");
+const upload = require("../config/multer");
 
 // Маршрут для оновлення даних користувача
-router.put("/update", authenticateToken, userController.updateUser);
+router.put(
+  "/update",
+  authenticateToken,
+  upload.single("avatar"),
+  userController.updateUser
+);
 
 // Маршрут для отримання всіх користувачів (лише для адміна)
 router.get("/all", authenticateToken, checkAdminRole, userController.getUsers);

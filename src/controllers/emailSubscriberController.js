@@ -2,7 +2,7 @@ const EmailSubscriber = require("../models/EmailSubscriber");
 const logger = require("../config/logger");
 
 // Функція додавання нового підписника
-async function addSubscriber(req, res) {
+const addSubscriber = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -26,10 +26,10 @@ async function addSubscriber(req, res) {
     logger.error(`Помилка при додаванні підписника: ${error.message}`);
     res.status(500).json({ error: "Не вдалося додати підписника." });
   }
-}
+};
 
 // Функція отримання всіх підписників
-async function getAllSubscribers(req, res) {
+const getAllSubscribers = async (req, res) => {
   try {
     const subscribers = await EmailSubscriber.findAll();
     res.status(200).json(subscribers);
@@ -37,10 +37,10 @@ async function getAllSubscribers(req, res) {
     logger.error(`Помилка при отриманні підписників: ${error.message}`);
     res.status(500).json({ error: "Не вдалося отримати підписників." });
   }
-}
+};
 
 // Функція видалення підписника за email
-async function deleteSubscriber(req, res) {
+const deleteSubscriber = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -58,7 +58,7 @@ async function deleteSubscriber(req, res) {
     logger.error(`Помилка при видаленні підписника: ${error.message}`);
     res.status(500).json({ error: "Не вдалося видалити підписника." });
   }
-}
+};
 
 module.exports = {
   addSubscriber,
