@@ -8,7 +8,7 @@ const HOTEL_ATTRIBUTES = [
   "name",
   "country",
   "star_rating",
-  "description",
+  "hotel_photos",
   "is_hot_deal",
   "tour_start_date",
   "tour_end_date",
@@ -18,6 +18,8 @@ const HOTEL_ATTRIBUTES = [
   "included_meal_types",
   "season",
   "total_orders",
+  "city",
+  "amenity",
 ];
 
 // Отримання параметрів пагінації з запиту
@@ -31,14 +33,42 @@ const getPaginationParams = (query, defaultLimit = 8) => {
 // Побудова фільтрів для бази даних
 const buildFilters = (query, isHotDeal = null) => {
   const filters = {};
+
   if (isHotDeal !== null) filters.is_hot_deal = isHotDeal;
   if (query.season) filters.season = query.season;
-  if (query.amenities || query.mealType) {
+  if (query.starRating) filters.star_rating = parseInt(query.starRating, 10);
+  if (query.mealType) {
     filters.included_meal_types = {
-      [Op.like]: `%${query.amenities || query.mealType}%`,
+      [Op.iLike]: `%${query.mealType}%`,
     };
   }
-  if (query.starRating) filters.star_rating = parseInt(query.starRating, 10);
+  if (query.country) filters.country = query.country;
+  if (query.priceFrom || query.priceTo) {
+    filters.tour_price = {};
+    if (query.priceFrom) {
+      filters.tour_price[Op.gte] = parseFloat(query.priceFrom);
+    }
+    if (query.priceTo) {
+      filters.tour_price[Op.lte] = parseFloat(query.priceTo);
+    }
+  }
+  if (query.amenities) {
+    const amenitiesArray = query.amenities.split(",").filter(Boolean);
+    if (amenitiesArray.length > 0) {
+      filters.amenity = { [Op.overlap]: amenitiesArray };
+    }
+  }
+
+  Object.keys(filters).forEach((key) => {
+    if (
+      filters[key] === undefined ||
+      filters[key] === null ||
+      filters[key] === ""
+    ) {
+      delete filters[key];
+    }
+  });
+
   return filters;
 };
 
@@ -71,6 +101,7 @@ const fetchHotelsData = async ({ filters, sort, limit, offset }) => {
     order: sort,
     limit,
     offset,
+    distinct: true,
   });
 
   return {
@@ -222,10 +253,100 @@ const getTopHotDeals = async (req, res) => {
   }
 };
 
+const getAllHotelsWithStreaming = async (req, res) => {
+  try {
+    // Налаштування заголовків для SSE
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    // Відправка початкового повідомлення
+    res.write('data: {"status": "starting"}\n\n');
+
+    logger.info("Отримання всіх готелів з потоковим завантаженням");
+
+    // Створюємо Set для відстеження унікальних ID готелів
+    const processedHotelIds = new Set();
+
+    // Потокове завантаження готелів
+    const hotelsStream = await models.Hotels.findAll({
+      attributes: HOTEL_ATTRIBUTES,
+      include: [
+        {
+          model: models.HotelLocation,
+          as: "location",
+          attributes: ["id", "latitude", "longitude"],
+        },
+      ],
+      nest: true,
+    });
+
+    // Перевірка на порожні дані
+    if (!hotelsStream || hotelsStream.length === 0) {
+      logger.error("Не знайдено жодного готелю.");
+      res.write('data: {"error": "Не знайдено жодного готелю"}\n\n');
+      res.end();
+      return;
+    }
+
+    // Поступове завантаження готелів і відправка унікальних готелів через SSE
+    for (const hotel of hotelsStream) {
+      try {
+        // Перевіряємо, чи цей готель вже було оброблено
+        if (processedHotelIds.has(hotel.id)) {
+          logger.info(`Пропуск дубльованого готелю з ID: ${hotel.id}`);
+          continue;
+        }
+
+        // Додаємо ID готелю до Set обраблених
+        processedHotelIds.add(hotel.id);
+
+        // Очищаємо дані перед відправкою
+        const cleanedHotel = cleanHotelData(hotel);
+
+        // Перевірка, чи очищені дані мають правильну структуру
+        if (!cleanedHotel || Object.keys(cleanedHotel).length === 0) {
+          throw new Error("Очищені дані готелю мають неправильну структуру");
+        }
+
+        // Відправляємо кожен унікальний готель на клієнт через SSE
+        res.write(`data: ${JSON.stringify(cleanedHotel)}\n\n`);
+
+        // Затримка для симуляції поступового завантаження (за потребою)
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      } catch (err) {
+        logger.error(`Помилка при обробці готелю ${hotel.id}: ${err.message}`);
+        res.write(
+          `data: {"error": "Помилка при обробці готелю ${hotel.id}"}\n\n`
+        );
+      }
+    }
+
+    // Додаємо статистику в кінцеве повідомлення
+    const stats = {
+      status: "completed",
+      totalProcessed: processedHotelIds.size,
+      duplicatesSkipped: hotelsStream.length - processedHotelIds.size,
+    };
+
+    // Завершуємо SSE з'єднання
+    res.write(`data: ${JSON.stringify(stats)}\n\n`);
+    res.end();
+  } catch (error) {
+    logger.error(
+      "Помилка при отриманні готелів з потоковим завантаженням: ",
+      error.message
+    );
+    res.write('data: {"error": "Не вдалося отримати список всіх готелів"}\n\n');
+    res.end();
+  }
+};
+
 module.exports = {
   getAllHotels,
   getHotDeals,
   getTopHotels,
   getTopRatedHotels,
   getTopHotDeals,
+  getAllHotelsWithStreaming,
 };

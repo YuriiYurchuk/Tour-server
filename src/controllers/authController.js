@@ -168,20 +168,27 @@ const refreshToken = async (req, res) => {
     // Верифікація refresh токена
     const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-    // Генерація нового access токена
+    // Отримання користувача з бази даних за ID
+    const dbUser = await User.findByPk(user.id);
+    if (!dbUser) {
+      logger.warn(`Користувач не знайдений у базі даних: ${user.id}`);
+      return res.status(404).json({ message: "Користувач не знайдений" });
+    }
+
+    // Генерація нового access токена з даними користувача з бази даних
     const newAccessToken = jwt.sign(
       {
-        id: user.id,
-        username: user.username,
-        avatar_url: user.avatar_url,
-        role: user.role,
+        id: dbUser.id,
+        username: dbUser.username,
+        avatar_url: dbUser.avatar_url,
+        role: dbUser.role,
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "15m" } // Термін дії нового access токена
     );
 
     // Логування успішного оновлення токену
-    logger.info(`Оновлено access токен для користувача ${user.username}`);
+    logger.info(`Оновлено access токен для користувача ${dbUser.username}`);
     res.json({ accessToken: newAccessToken }); // Відправлення нового access токена
   } catch (error) {
     // Логування помилки при оновленні токену

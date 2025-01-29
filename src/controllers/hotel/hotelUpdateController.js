@@ -27,6 +27,7 @@ const updateHotel = async (req, res) => {
       review_count,
       included_meal_types,
       season,
+      city,
       location,
       amenities,
       meals,
@@ -72,6 +73,7 @@ const updateHotel = async (req, res) => {
     if (included_meal_types !== undefined)
       updateData.included_meal_types = included_meal_types;
     if (season !== undefined) updateData.season = season;
+    if (city !== undefined) updateData.city = city;
 
     if (Object.keys(updateData).length > 0) {
       await hotel.update(updateData, { transaction });

@@ -266,9 +266,8 @@ const changeBookingStatus = async (req, res) => {
 
 const cancelBooking = async (req, res) => {
   try {
-    const booking = req.booking; // Отримуємо бронювання з middleware
+    const booking = req.booking;
 
-    // Змінюємо статус на "скасовано"
     booking.status = "скасовано";
     await booking.save();
 

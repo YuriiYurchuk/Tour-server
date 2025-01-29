@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database.js");
 const User = require("./User");
+const Hotel = require("./Hotel/Hotels");
 
 const CompanyReview = sequelize.define(
   "CompanyReview",
@@ -18,6 +19,13 @@ const CompanyReview = sequelize.define(
       },
       onDelete: "NO ACTION",
     },
+    hotel_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Hotel,
+        key: "id",
+      },
+    },
     rating: {
       type: DataTypes.SMALLINT,
       allowNull: true,
@@ -27,18 +35,6 @@ const CompanyReview = sequelize.define(
       },
     },
     comment: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    country: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    hotel_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    user_photo: {
       type: DataTypes.TEXT,
       allowNull: true,
     },

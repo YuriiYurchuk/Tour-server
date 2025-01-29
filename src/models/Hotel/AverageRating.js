@@ -30,9 +30,6 @@ const AverageRating = sequelize.define(
     price_avg: {
       type: DataTypes.NUMERIC,
     },
-    quality_avg: {
-      type: DataTypes.NUMERIC,
-    },
     beach_avg: {
       type: DataTypes.NUMERIC,
     },

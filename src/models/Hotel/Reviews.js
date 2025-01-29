@@ -79,14 +79,6 @@ const Reviews = sequelize.define(
         max: 10,
       },
     },
-    quality_rating: {
-      type: DataTypes.NUMERIC,
-      allowNull: true,
-      validate: {
-        min: 0,
-        max: 10,
-      },
-    },
     beach_rating: {
       type: DataTypes.NUMERIC,
       allowNull: true,

@@ -18,6 +18,7 @@ const createHotel = async (req, res) => {
       review_count,
       included_meal_types,
       season,
+      city,
       location,
       amenities,
       meals,
@@ -79,6 +80,7 @@ const createHotel = async (req, res) => {
         review_count,
         included_meal_types,
         season,
+        city,
       },
       { transaction }
     );

@@ -24,7 +24,7 @@ const getHotelByIdWithAssociations = async (req, res) => {
               attributes: ["id", "first_name"],
             },
           ],
-          order: [["created_at", "ASC"]],
+          order: [["created_at", "DESC"]],
           limit: 2,
         },
         {
@@ -70,6 +70,34 @@ const getHotelByIdWithAssociations = async (req, res) => {
         {
           model: model.HotelSurroundings,
           as: "surroundings",
+        },
+        {
+          model: model.HotelAirportDistance,
+          as: "airport",
+        },
+        {
+          model: model.HotelBeach,
+          as: "beach",
+        },
+        {
+          model: model.HotelCommunication,
+          as: "communication",
+        },
+        {
+          model: model.HotelContact,
+          as: "contact",
+        },
+        {
+          model: model.HotelGeneral,
+          as: "general",
+        },
+        {
+          model: model.HotelKids,
+          as: "kids",
+        },
+        {
+          model: model.HotelServices,
+          as: "services",
         },
       ],
     });

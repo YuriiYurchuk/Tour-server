@@ -29,7 +29,7 @@ const HotelMealTypes = sequelize.define(
       allowNull: true,
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.ARRAY(DataTypes.TEXT),
       allowNull: true,
     },
   },
@@ -39,6 +39,5 @@ const HotelMealTypes = sequelize.define(
     underscored: true,
   }
 );
-
 
 module.exports = HotelMealTypes;

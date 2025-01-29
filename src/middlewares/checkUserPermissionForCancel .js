@@ -1,3 +1,5 @@
+const Booking = require("../models/Booking");
+
 const checkUserPermissionForCancel = async (req, res, next) => {
   const bookingId = req.params.id;
   const userId = req.user.id; // Ідентифікатор користувача з authMiddleware

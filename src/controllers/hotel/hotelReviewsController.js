@@ -16,7 +16,6 @@ const createReview = async (req, res) => {
       room_rating,
       staff_rating,
       price_rating,
-      quality_rating,
       beach_rating,
       animation_rating,
     } = req.body;
@@ -53,7 +52,6 @@ const createReview = async (req, res) => {
       room_rating,
       staff_rating,
       price_rating,
-      quality_rating,
       beach_rating,
       animation_rating,
     });
@@ -71,6 +69,45 @@ const createReview = async (req, res) => {
   }
 };
 
+const getReviews = async (req, res) => {
+  try {
+    // Отримання параметрів пагінації з query
+    const page = parseInt(req.query.page) || 1; // Якщо не вказано, сторінка за замовчуванням = 1
+    const limit = parseInt(req.query.limit) || 9; // Якщо не вказано, ліміт за замовчуванням = 10
+    const offset = (page - 1) * limit; // Обчислення offset для пагінації
+
+    logger.info(
+      `Отримано запит на отримання відгуків. Сторінка: ${page}, Ліміт: ${limit}`
+    );
+
+    // Отримання відгуків з бази даних з пагінацією
+    const reviews = await Reviews.findAll({
+      limit: limit,
+      offset: offset,
+      order: [["createdAt", "DESC"]], // Сортування за датою створення (за спаданням)
+    });
+
+    // Якщо відгуків не знайдено
+    if (reviews.length === 0) {
+      logger.warn("Відгуки не знайдено");
+      return res.status(404).json({ message: "Відгуки не знайдено" });
+    }
+
+    // Повернення відгуків з пагінацією
+    res.status(200).json({
+      message: "Відгуки успішно отримано",
+      reviews,
+      page,
+      limit,
+    });
+  } catch (error) {
+    // Логування помилки при отриманні відгуків
+    logger.error("Помилка при отриманні відгуків: ", error);
+    res.status(500).json({ error: "Внутрішня помилка сервера" });
+  }
+};
+
 module.exports = {
   createReview,
+  getReviews,
 };

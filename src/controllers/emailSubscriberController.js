@@ -14,14 +14,17 @@ const addSubscriber = async (req, res) => {
     if (existingSubscriber) {
       return res
         .status(409)
-        .json({ error: "Ця електронна адреса вже підписана на розсилку." });
+        .json({ message: "Ця електронна адреса вже підписана на розсилку." });
     }
 
     // Додаємо нового підписника
     const newSubscriber = await EmailSubscriber.create({ email });
     logger.info(`Новий підписник доданий: ${email}`);
 
-    res.status(201).json(newSubscriber);
+    return res.status(201).json({
+      message: "Електронну адресу успішно додано до розсилки.",
+      subscriber: newSubscriber,
+    });
   } catch (error) {
     logger.error(`Помилка при додаванні підписника: ${error.message}`);
     res.status(500).json({ error: "Не вдалося додати підписника." });

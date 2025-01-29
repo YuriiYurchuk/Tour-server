@@ -1,7 +1,6 @@
 const ContactForm = require("../models/ContactForm");
 const logger = require("../config/logger");
 
-// Функція додавання нового запису у контактну форму
 const createContactForm = async (req, res) => {
   try {
     const { name, phone_number } = req.body;
@@ -24,13 +23,27 @@ const createContactForm = async (req, res) => {
         );
 
         return res.status(429).json({
-          error:
-            "Ви вже надсилали форму. Будь ласка, зачекайте 24 години перед повторною спробою.",
+          message: "Ви вже надсилали дані. Спробуйте пізніше.",
+        });
+      } else {
+        // Якщо пройшло більше 24 годин, оновлюємо запис
+        existingContact.name = name; // Оновлюємо ім'я або інші дані за потребою
+        existingContact.created_at = new Date(); // Оновлюємо час останнього запиту
+
+        await existingContact.save();
+
+        logger.info(
+          `Запис з номером телефону ${phone_number} оновлено після 24 годин.`
+        );
+
+        return res.status(200).json({
+          message: "Ваша форма була оновлена після 24 годин.",
+          contact: existingContact,
         });
       }
     }
 
-    // Створюємо новий запис у базі даних
+    // Якщо контакт не знайдено, створюємо новий
     const newContactForm = await ContactForm.create({
       name,
       phone_number,
@@ -41,7 +54,11 @@ const createContactForm = async (req, res) => {
       `Новий запис створено в ContactForm: ${JSON.stringify(newContactForm)}`
     );
 
-    res.status(201).json(newContactForm);
+    // Відповідь користувачу з повідомленням
+    res.status(201).json({
+      message: "Ваші дані успішно надіслано. Дякуємо за звернення!",
+      contact: newContactForm,
+    });
   } catch (error) {
     // Логуємо помилку
     logger.error(

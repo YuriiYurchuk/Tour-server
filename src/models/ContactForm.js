@@ -20,6 +20,7 @@ const ContactForm = sequelize.define(
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+      allowNull: false,
     },
     last_submitted_at: {
       type: DataTypes.DATE,

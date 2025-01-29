@@ -6,7 +6,7 @@ const hotelReviewsController = require("../controllers/hotel/hotelReviewsControl
 const getAllHotelsController = require("../controllers/hotel/getHotelsController");
 const deleteRoomGallery = require("../controllers/hotel/deleteRoomGallery");
 const hotelUpdateController = require("../controllers/hotel/hotelUpdateController");
-const getHotelDetails = require("../controllers/hotel/getHotelDetails")
+const getHotelDetails = require("../controllers/hotel/getHotelDetails");
 const authenticateToken = require("../middlewares/authMiddleware");
 const checkManagerRole = require("../middlewares/checkManagerRole");
 const upload = require("../config/multer");
@@ -18,8 +18,8 @@ router.post(
     { name: "gallery", maxCount: 10 },
     { name: "roomType", maxCount: 5 },
   ]),
-  authenticateToken,
-  checkManagerRole,
+  // authenticateToken,
+  // checkManagerRole,
   hotelCreateController.createHotel
 );
 
@@ -54,12 +54,18 @@ router.delete(
 // Додавання відгуку про готель
 router.post(
   "/reviews-hotel",
-  authenticateToken,
+  // authenticateToken,
   hotelReviewsController.createReview
 );
 
+// Отримання відгуків
+router.get("/reviews-hotel", hotelReviewsController.getReviews);
+
 // Отримання всіх готелів з параметрами
 router.get("/all", getAllHotelsController.getAllHotels);
+
+// отримання всіх готелів для карти
+router.get("/all-map", getAllHotelsController.getAllHotelsWithStreaming);
 
 // Отримання гарячих турів
 router.get("/hot", getAllHotelsController.getHotDeals);

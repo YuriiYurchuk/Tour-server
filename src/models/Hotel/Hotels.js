@@ -72,6 +72,15 @@ const Hotels = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    amenity: {
+      type: DataTypes.ARRAY(DataTypes.TEXT),
+      allowNull: true,
+    },
   },
   {
     tableName: "hotels",
@@ -79,6 +88,5 @@ const Hotels = sequelize.define(
     underscored: true,
   }
 );
-
 
 module.exports = Hotels;

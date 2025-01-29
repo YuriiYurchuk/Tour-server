@@ -11,6 +11,14 @@ const HotelSpas = require("./Hotel/HotelSpas");
 const HotelPools = require("./Hotel/HotelPools");
 const HotelRestaurants = require("./Hotel/HotelRestaurants");
 const HotelSurroundings = require("./Hotel/HotelSurroundings");
+const HotelAirportDistance = require("./Hotel/HotelAirportDistance");
+const HotelBeach = require("./Hotel/HotelBeach");
+const HotelCommunication = require("./Hotel/HotelCommunication");
+const HotelContact = require("./Hotel/HotelContact");
+const HotelGeneral = require("./Hotel/HotelGeneral");
+const HotelKids = require("./Hotel/HotelKids");
+const HotelServices = require("./Hotel/HotelServices");
+
 const User = require("./User");
 
 function setHotelAssociations() {
@@ -71,6 +79,33 @@ function setHotelAssociations() {
   // Відгук і користувач
   Reviews.belongsTo(User, { foreignKey: "user_id", as: "user" });
   User.hasMany(Reviews, { foreignKey: "user_id" });
+
+  Hotel.hasMany(HotelAirportDistance, {
+    foreignKey: "hotel_id",
+    as: "airport",
+  });
+  HotelAirportDistance.belongsTo(Hotel, { foreignKey: "hotel_id" });
+
+  Hotel.hasMany(HotelBeach, { foreignKey: "hotel_id", as: "beach" });
+  HotelBeach.belongsTo(Hotel, { foreignKey: "hotel_id" });
+
+  Hotel.hasMany(HotelCommunication, {
+    foreignKey: "hotel_id",
+    as: "communication",
+  });
+  HotelCommunication.belongsTo(Hotel, { foreignKey: "hotel_id" });
+
+  Hotel.hasMany(HotelContact, { foreignKey: "hotel_id", as: "contact" });
+  HotelContact.belongsTo(Hotel, { foreignKey: "hotel_id" });
+
+  Hotel.hasMany(HotelGeneral, { foreignKey: "hotel_id", as: "general" });
+  HotelGeneral.belongsTo(Hotel, { foreignKey: "hotel_id" });
+
+  Hotel.hasMany(HotelKids, { foreignKey: "hotel_id", as: "kids" });
+  HotelKids.belongsTo(Hotel, { foreignKey: "hotel_id" });
+
+  Hotel.hasMany(HotelServices, { foreignKey: "hotel_id", as: "services" });
+  HotelServices.belongsTo(Hotel, { foreignKey: "hotel_id" });
 }
 
 module.exports = setHotelAssociations;
