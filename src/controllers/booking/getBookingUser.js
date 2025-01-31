@@ -1,5 +1,4 @@
 const Booking = require("../../models/Booking");
-const BookingFlight = require("../../models/BookingFlight");
 const BookingChildren = require("../../models/BookingChildren");
 const Hotels = require("../../models/Hotel/Hotels");
 const HotelRoomTypes = require("../../models/Hotel/HotelRoomTypes");
@@ -17,7 +16,6 @@ const getBookingByUserId = async (req, res) => {
     const booking = await Booking.findOne({
       where: { user_id },
       include: [
-        { model: BookingFlight, as: "flights" }, // Рейси, асоційовані з бронюванням
         { model: BookingChildren, as: "children" }, // Діти, асоційовані з бронюванням
         { model: Hotels }, // Готель, асоційований з бронюванням
         { model: HotelRoomTypes }, // Типи кімнат, асоційовані з бронюванням

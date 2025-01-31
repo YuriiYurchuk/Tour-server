@@ -1,5 +1,4 @@
 const Booking = require("../../models/Booking");
-const BookingFlight = require("../../models/BookingFlight");
 const BookingChildren = require("../../models/BookingChildren");
 const User = require("../../models/User");
 const Hotel = require("../../models/Hotel/Hotels");
@@ -23,11 +22,9 @@ const createBooking = async (req, res) => {
       end_date,
       number_of_tourists,
       number_of_children,
-      departure_city,
       departure_airport,
       status,
       children,
-      flights,
     } = req.body;
 
     // Перевірка, чи є активні бронювання для цього користувача
@@ -88,35 +85,6 @@ const createBooking = async (req, res) => {
         logger.info("Дитина додана до бронювання", {
           booking_id: booking.id,
           age: child.age,
-        });
-      }
-    }
-
-    // Обробка рейсів, якщо вони є в запиті
-    if (flights && Array.isArray(flights)) {
-      for (const flight of flights) {
-        await BookingFlight.create(
-          {
-            booking_id: booking.id,
-            departure_time: flight.departure_time,
-            arrival_time: flight.arrival_time,
-            departure_date: flight.departure_date,
-            arrival_date: flight.arrival_date,
-            departure_location: flight.departure_location,
-            arrival_location: flight.arrival_location,
-            airline: flight.airline,
-            flight_number: flight.flight_number,
-            baggage_allowance_kg: flight.baggage_allowance_kg,
-            carry_on_allowance_kg: flight.carry_on_allowance_kg,
-            price_baggage_allowance: flight.price_baggage_allowance,
-            price_carry_on_allowance: flight.price_carry_on_allowance,
-            direction: flight.direction,
-          },
-          { transaction }
-        );
-        logger.info("Рейс доданий до бронювання", {
-          booking_id: booking.id,
-          flight_number: flight.flight_number,
         });
       }
     }
@@ -192,10 +160,7 @@ const getBookingsByStatus = async (req, res) => {
     // Пошук бронювань за вказаним статусом
     const bookings = await Booking.findAll({
       where: { status },
-      include: [
-        { model: BookingFlight, as: "flights" },
-        { model: BookingChildren, as: "children" },
-      ],
+      include: [{ model: BookingChildren, as: "children" }],
     });
 
     // Перевірка, чи знайдено бронювання

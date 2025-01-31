@@ -5,7 +5,6 @@ const HotelRoomType = require("./Hotel/HotelRoomTypes");
 const HotelMealType = require("./Hotel/HotelMealTypes");
 const BookingChildren = require("./BookingChildren");
 const BookingContract = require("./BookingContract");
-const BookingFlight = require("./BookingFlight");
 const BookingServices = require("./BookingServices");
 const BookingTourists = require("./BookingTourists");
 
@@ -37,10 +36,6 @@ const setupAssociations = () => {
   // Одне Booking може мати один BookingContract
   Booking.hasOne(BookingContract, { foreignKey: "booking_id", as: "contract" });
   BookingContract.belongsTo(Booking, { foreignKey: "booking_id" });
-
-  // Одне Booking може мати багато BookingFlight
-  Booking.hasMany(BookingFlight, { as: "flights", foreignKey: "booking_id" });
-  BookingFlight.belongsTo(Booking, { foreignKey: "booking_id" });
 
   // Одне Booking може мати багато BookingServices
   Booking.hasMany(BookingServices, {

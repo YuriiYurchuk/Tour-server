@@ -69,10 +69,6 @@ const Booking = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    departure_city: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-    },
     departure_airport: {
       type: DataTypes.STRING(100),
       allowNull: true,
@@ -105,6 +101,5 @@ const Booking = sequelize.define(
     },
   }
 );
-
 
 module.exports = Booking;

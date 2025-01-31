@@ -5,7 +5,7 @@ const Booking = require("../../models/Booking");
 const logger = require("../../config/logger");
 
 const createBookingDetails = async (req, res) => {
-  const transaction = await Booking.sequelize.transaction(); // Початок транзакції
+  const transaction = await Booking.sequelize.transaction();
   try {
     const { booking_id } = req.params; // Отримуємо booking_id з параметрів запиту
     const { contract, services, tourists } = req.body;
