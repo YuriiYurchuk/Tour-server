@@ -54,7 +54,7 @@ router.delete(
 // Додавання відгуку про готель
 router.post(
   "/reviews-hotel",
-  // authenticateToken,
+  authenticateToken,
   hotelReviewsController.createReview
 );
 

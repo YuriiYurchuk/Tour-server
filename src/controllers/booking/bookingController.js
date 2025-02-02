@@ -7,6 +7,7 @@ const MealType = require("../../models/Hotel/HotelMealTypes");
 const logger = require("../../config/logger");
 const { sendBookingConfirmationEmail } = require("../../utils/mailer");
 const { sendBookingStatusUpdateEmail } = require("../../utils/mailer");
+const { Sequelize } = require("sequelize");
 
 const createBooking = async (req, res) => {
   const transaction = await Booking.sequelize.transaction();
@@ -32,8 +33,11 @@ const createBooking = async (req, res) => {
 
     const existingBooking = await Booking.findOne({
       where: {
-        user_id,
-        status: ["очікується", "підтверджено"], // Перевіряємо тільки активні бронювання
+        user_id: user_id,
+        [Sequelize.Op.or]: [
+          { status: "очікується" },
+          { status: "підтверджено" },
+        ],
       },
     });
 
@@ -63,7 +67,6 @@ const createBooking = async (req, res) => {
         end_date,
         number_of_tourists,
         number_of_children,
-        departure_city,
         departure_airport,
         status,
       },
