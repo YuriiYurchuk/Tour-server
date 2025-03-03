@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "templates")));
 app.use(
   cors({
     origin: "http://localhost:3000",
-    // origin: "http://192.168.0.94:3000",
+    // origin: "http://192.168.0.101:3000",
     credentials: true,
   })
 );

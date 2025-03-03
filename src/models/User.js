@@ -69,7 +69,7 @@ const User = sequelize.define(
     },
     is_subscribed: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      defaultValue: false,
     },
   },
   {

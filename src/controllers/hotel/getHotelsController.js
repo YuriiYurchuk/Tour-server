@@ -204,7 +204,7 @@ const getTopRatedHotels = async (req, res) => {
 
     const { hotels } = await fetchHotelsData({
       filters: {},
-      sort: [["average_rating", "DESC"]],
+      sort: [["average_rating", "asc"]],
       limit: 10,
       offset: 0,
     });

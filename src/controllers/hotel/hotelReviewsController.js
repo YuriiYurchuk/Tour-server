@@ -38,7 +38,21 @@ const createReview = async (req, res) => {
       return res.status(404).json({ error: "Користувача не знайдено" });
     }
 
-    // **Перевірка, чи користувач бронював цей готель**
+    // Перевірка, чи користувач уже залишав відгук для цього готелю
+    const existingReview = await Reviews.findOne({
+      where: { hotel_id: hotel_id, user_id: user_id },
+    });
+
+    if (existingReview) {
+      logger.warn(
+        `Користувач з id ${user_id} вже залишав відгук для готелю ${hotel_id}`
+      );
+      return res.status(403).json({
+        error: "Ви вже залишали відгук для цього готелю",
+      });
+    }
+
+    // Перевірка, чи користувач бронював цей готель
     const booking = await Booking.findOne({
       where: { hotel_id: hotel_id, user_id: user_id },
     });

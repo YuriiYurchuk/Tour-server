@@ -1,4 +1,5 @@
 const EmailSubscriber = require("../models/EmailSubscriber");
+const User = require("../models/User");
 const logger = require("../config/logger");
 
 // Функція додавання нового підписника
@@ -63,8 +64,66 @@ const deleteSubscriber = async (req, res) => {
   }
 };
 
+const subscribeUser = async (req, res) => {
+  try {
+    const { userId } = req.body; // Параметри для підписки (ID користувача)
+
+    // Перевіряємо, чи існує користувач з таким ID
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Користувача не знайдено." });
+    }
+
+    // Перевіряємо, чи вже підписаний користувач
+    if (user.is_subscribed) {
+      return res.status(400).json({ message: "Користувач вже підписаний." });
+    }
+
+    // Оновлюємо поле is_subscribed на true
+    user.is_subscribed = true;
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Користувач підписаний на розсилку." });
+  } catch (error) {
+    logger.error(`Помилка при підписці: ${error.message}`);
+    return res.status(500).json({ error: "Не вдалося підписати користувача." });
+  }
+};
+
+const unsubscribeUser = async (req, res) => {
+  try {
+    const { userId } = req.body; // Параметри для відписки (ID користувача)
+
+    // Перевіряємо, чи існує користувач з таким ID
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Користувача не знайдено." });
+    }
+
+    // Перевіряємо, чи вже відписаний користувач
+    if (!user.is_subscribed) {
+      return res.status(400).json({ message: "Користувач ще не підписаний." });
+    }
+
+    // Оновлюємо поле is_subscribed на false
+    user.is_subscribed = false;
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Користувач відписаний від розсилки." });
+  } catch (error) {
+    logger.error(`Помилка при відписці: ${error.message}`);
+    return res.status(500).json({ error: "Не вдалося відписати користувача." });
+  }
+};
+
 module.exports = {
   addSubscriber,
   getAllSubscribers,
   deleteSubscriber,
+  subscribeUser,
+  unsubscribeUser,
 };

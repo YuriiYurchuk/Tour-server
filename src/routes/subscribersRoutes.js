@@ -8,9 +8,33 @@ const checkManagerRole = require("../middlewares/checkManagerRole");
 router.post("/add", emailSubscriberController.addSubscriber);
 
 // Маршрут для отримання всіх підписників
-router.get("/all", authenticateToken, checkManagerRole, emailSubscriberController.getAllSubscribers);
+router.get(
+  "/all",
+  authenticateToken,
+  checkManagerRole,
+  emailSubscriberController.getAllSubscribers
+);
 
 // Маршрут для видалення підписника за email
-router.delete("/delete", authenticateToken, checkManagerRole, emailSubscriberController.deleteSubscriber);
+router.delete(
+  "/delete",
+  authenticateToken,
+  checkManagerRole,
+  emailSubscriberController.deleteSubscriber
+);
+
+// Маршрут для підписки користувача
+router.post(
+  "/subscribe",
+  authenticateToken,
+  emailSubscriberController.subscribeUser
+);
+
+// Маршрут для відписки
+router.post(
+  "/unsubscribe",
+  authenticateToken,
+  emailSubscriberController.unsubscribeUser
+);
 
 module.exports = router;

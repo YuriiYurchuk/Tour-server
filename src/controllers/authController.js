@@ -101,6 +101,7 @@ const login = async (req, res) => {
         username: user.username,
         avatar_url: user.avatar_url,
         role: user.role,
+        email_verified: user.email_verified,
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "15m" } // Термін дії access токена - 15 хвилин
@@ -182,6 +183,7 @@ const refreshToken = async (req, res) => {
         username: dbUser.username,
         avatar_url: dbUser.avatar_url,
         role: dbUser.role,
+        email_verified: user.email_verified,
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "15m" } // Термін дії нового access токена
