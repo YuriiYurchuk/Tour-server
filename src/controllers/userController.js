@@ -3,16 +3,18 @@ const path = require("path");
 const User = require("../models/User");
 const logger = require("../config/logger");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const { sendVerificationEmail } = require("../utils/mailer");
 
 // Функція оновлення даних користувача
 const updateUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { first_name, last_name, email } = req.body;
+    const { first_name, last_name, email, current_password, new_password } =
+      req.body;
     let avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : null;
 
-    if (!first_name && !last_name && !avatarUrl && !email) {
+    if (!first_name && !last_name && !avatarUrl && !email && !new_password) {
       logger.warn(`Користувач ${userId} не надав даних для оновлення.`);
       return res
         .status(400)
@@ -25,26 +27,21 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: "Користувача не знайдено." });
     }
 
+    const DEFAULT_AVATAR = "/uploads/avatars/default-avatar.jpg";
+
     if (first_name) user.first_name = first_name;
     if (last_name) user.last_name = last_name;
-    if (avatarUrl) {
-      // Видаляємо старий файл, якщо він існує
-      if (user.avatar_url) {
-        const oldAvatarPath = path.join(
-          __dirname,
-          "../../uploads/avatars",
-          user.avatar_url
-        );
-        fs.unlink(oldAvatarPath, (err) => {
-          if (err) {
-            logger.warn(`Не вдалося видалити старий аватар: ${err.message}`);
-          } else {
-            logger.info(`Старий аватар видалено: ${oldAvatarPath}`);
-          }
-        });
-      }
 
-      // Оновлюємо новий аватар
+    if (avatarUrl) {
+      if (user.avatar_url && user.avatar_url !== DEFAULT_AVATAR) {
+        const oldAvatarPath = path.join(__dirname, "../../", user.avatar_url);
+        try {
+          await fs.promises.unlink(oldAvatarPath);
+          logger.info(`Старий аватар видалено: ${oldAvatarPath}`);
+        } catch (err) {
+          logger.warn(`Не вдалося видалити старий аватар: ${err.message}`);
+        }
+      }
       user.avatar_url = avatarUrl;
     }
 
@@ -57,20 +54,34 @@ const updateUser = async (req, res) => {
           .json({ message: "Ця електронна пошта вже використовується." });
       }
 
-      // Генеруємо новий токен для підтвердження
       const email_verification_token = crypto.randomBytes(32).toString("hex");
-
-      // Оновлюємо електронну пошту та статус верифікації
       user.email = email;
       user.email_verified = false;
       user.email_verification_token = email_verification_token;
-
-      // Надсилаємо новий лист для підтвердження
       await sendVerificationEmail(email, email_verification_token);
-
       logger.info(
         `Користувач ${userId} оновив електронну адресу. Верифікація потрібна повторно.`
       );
+    }
+    if (new_password) {
+      if (!current_password) {
+        return res
+          .status(400)
+          .json({ message: "Необхідно вказати старий пароль." });
+      }
+
+      const isMatch = await bcrypt.compare(
+        current_password,
+        user.password_hash
+      );
+      if (!isMatch) {
+        logger.warn(`Старий пароль для користувача ${userId} невірний.`);
+        return res.status(400).json({ message: "Старий пароль неправильний." });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      user.password_hash = await bcrypt.hash(new_password, salt);
+      logger.info(`Користувач ${userId} змінив пароль.`);
     }
 
     await user.save();
