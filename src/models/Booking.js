@@ -49,7 +49,7 @@ const Booking = sequelize.define(
       onUpdate: "NO ACTION",
       onDelete: "SET NULL",
     },
-    price_per_person: {
+    total_price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },

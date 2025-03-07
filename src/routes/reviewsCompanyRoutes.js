@@ -15,16 +15,16 @@ router.get("/get-reviews", reviewsCompanyController.getCompanyReviews);
 
 // Роут для видалення відгуку
 router.delete(
-  "/reviews/:id",
+  "/delete/:id",
   authMiddleware,
   reviewsCompanyController.deleteCompanyReview
 );
 
 // Роут для отримання конкретного відгуку, залишеного користувачем
 router.get(
-  "/reviews/:id",
+  "/get-reviews/:id",
   authMiddleware,
-  reviewsCompanyController.getUserReview
+  reviewsCompanyController.getUserReviews
 );
 
 router.get("/latest", reviewsCompanyController.getLatestReviews);

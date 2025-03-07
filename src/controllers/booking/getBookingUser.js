@@ -13,7 +13,7 @@ const getBookingByUserId = async (req, res) => {
     logger.info("Запит на отримання бронювання для користувача", { user_id });
 
     // Шукаємо бронювання для вказаного користувача з усіма асоційованими даними
-    const booking = await Booking.findOne({
+    const booking = await Booking.findAll({
       where: { user_id },
       include: [
         { model: BookingChildren, as: "children" }, // Діти, асоційовані з бронюванням

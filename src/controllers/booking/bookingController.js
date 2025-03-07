@@ -18,7 +18,7 @@ const createBooking = async (req, res) => {
       hotel_id,
       room_type_id,
       meal_plan_id,
-      price_per_person,
+      total_price,
       start_date,
       end_date,
       number_of_tourists,
@@ -62,7 +62,7 @@ const createBooking = async (req, res) => {
         hotel_id,
         room_type_id,
         meal_plan_id,
-        price_per_person,
+        total_price,
         start_date,
         end_date,
         number_of_tourists,
@@ -234,13 +234,18 @@ const changeBookingStatus = async (req, res) => {
 
 const cancelBooking = async (req, res) => {
   try {
-    const booking = req.booking;
+    const bookingId = req.params.id;
+    const booking = await Booking.findByPk(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Бронювання не знайдено." });
+    }
 
     booking.status = "скасовано";
     await booking.save();
-
     res.status(200).json({ message: "Бронювання успішно скасовано.", booking });
   } catch (error) {
+    console.error("Error in cancelBooking:", error);
     res.status(500).json({
       message: "Помилка при скасуванні бронювання.",
       error: error.message,

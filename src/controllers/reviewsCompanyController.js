@@ -93,7 +93,7 @@ const getCompanyReviews = async (req, res) => {
 const deleteCompanyReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id; // Маємо припустити, що user_id доступний через аутентифікацію (наприклад, в токені)
+    const userId = req.user.id;
 
     // Знаходимо відгук по id
     const review = await CompanyReview.findByPk(id);
@@ -129,50 +129,40 @@ const deleteCompanyReview = async (req, res) => {
   }
 };
 
-const getUserReview = async (req, res) => {
+const getUserReviews = async (req, res) => {
   try {
-    const { id } = req.params; // Отримуємо id відгуку з параметрів запиту
-    const userId = req.user.id; // Маємо припустити, що user_id доступний через аутентифікацію (наприклад, в токені)
+    const userId = req.user.id; // Отримуємо ID поточного користувача з токена чи сесії
 
-    // Знаходимо відгук за id
-    const review = await CompanyReview.findByPk(id, {
+    const reviews = await CompanyReview.findAll({
+      where: {
+        user_id: userId,
+      },
       include: [
         {
           model: User,
-          as: "user", // Вказуємо псевдонім
+          as: "user",
           attributes: ["id", "first_name", "avatar_url"],
         },
         {
           model: Hotel,
-          as: "hotel", // Вказуємо псевдонім
+          as: "hotel",
           attributes: ["id", "name", "country"],
         },
       ],
     });
 
-    if (!review) {
-      logger.error(`Відгук з id ${id} не знайдено`);
-      return res.status(404).json({ message: "Відгук не знайдено" });
+    if (!reviews.length) {
+      logger.error(`Відгуки для користувача з id ${userId} не знайдено`);
+      return res.status(404).json({ message: "Відгуки не знайдено" });
     }
 
-    // Перевірка чи користувач є автором цього відгуку
-    if (review.user_id !== userId) {
-      logger.error(
-        `Користувач з id ${userId} намагається отримати чужий відгук`
-      );
-      return res
-        .status(403)
-        .json({ message: "Ви не маєте прав на доступ до цього відгуку" });
-    }
-
-    logger.info(`Користувач ${userId} отримав відгук з id ${id}`);
-
+    logger.info(`Отримано відгуки для користувача з id ${userId}`);
     return res.status(200).json({
-      message: "Відгук отримано успішно",
-      data: review,
+      message: "Відгуки отримано успішно",
+      data: reviews,
     });
   } catch (error) {
-    logger.error(`Помилка при отриманні відгуку: ${error.message}`);
+    logger.error(`Помилка при отриманні відгуків: ${error.message}`);
     return res.status(500).json({
       message: "Внутрішня помилка сервера",
       error: error.message,
@@ -218,6 +208,6 @@ module.exports = {
   createCompanyReview,
   getCompanyReviews,
   deleteCompanyReview,
-  getUserReview,
+  getUserReviews,
   getLatestReviews,
 };
