@@ -1,6 +1,6 @@
 const Booking = require("../models/Booking");
 
-const checkUserPermissionForCancel = async (req, res, next) => {
+const checkUserPermissionFor = async (req, res, next) => {
   const bookingId = req.params.id;
   const userId = req.user.id; // Ідентифікатор користувача з authMiddleware
 
@@ -21,4 +21,4 @@ const checkUserPermissionForCancel = async (req, res, next) => {
   next(); // Дозволити скасування, якщо це бронювання користувача
 };
 
-module.exports = checkUserPermissionForCancel;
+module.exports = checkUserPermissionFor;

@@ -6,8 +6,10 @@ const logger = require("../../config/logger");
 
 const createBookingDetails = async (req, res) => {
   const transaction = await Booking.sequelize.transaction();
+  let booking_id;
+
   try {
-    const { booking_id } = req.params; // Отримуємо booking_id з параметрів запиту
+    booking_id = req.params.booking_id;
     const { contract, services, tourists } = req.body;
 
     logger.info("Початок створення деталей бронювання", { booking_id });
@@ -58,6 +60,8 @@ const createBookingDetails = async (req, res) => {
         logger.info("Туриста додано до бронювання", { booking_id, tourist });
       }
     }
+
+    await booking.update({ status: "дані заповнено" }, { transaction });
 
     // Фіксація транзакції
     await transaction.commit();

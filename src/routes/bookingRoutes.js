@@ -5,7 +5,7 @@ const getBookingUser = require("../controllers/booking/getBookingUser");
 const bookingDataController = require("../controllers/booking/bookingDataController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const checkManagerRole = require("../middlewares/checkManagerRole");
-const checkUserPermissionForCancel = require("../middlewares/checkUserPermissionForCancel ");
+const checkUserPermissionFor = require("../middlewares/checkUserPermissionFor");
 
 // Створення нового бронювання
 router.post("/create", authMiddleware, bookingController.createBooking);
@@ -15,6 +15,12 @@ router.get(
   "/get-booking/:user_id",
   authMiddleware,
   getBookingUser.getBookingByUserId
+);
+
+router.get(
+  "/:booking_id",
+  authMiddleware,
+  getBookingUser.getSingleBookingWithConfirmation
 );
 
 // Оновлення статусу букінгу
@@ -29,7 +35,7 @@ router.patch(
 router.patch(
   "/cancel/:id",
   authMiddleware,
-  checkUserPermissionForCancel,
+  checkUserPermissionFor,
   bookingController.cancelBooking
 );
 
@@ -51,6 +57,7 @@ router.post(
 // Отримання даних букінгу
 router.get(
   "/details/:booking_id",
+  checkManagerRole,
   authMiddleware,
   bookingDataController.getBookingDetails
 );

@@ -78,7 +78,15 @@ const Booking = sequelize.define(
       allowNull: false,
       defaultValue: "очікується",
       validate: {
-        isIn: [["очікується", "підтверджено", "скасовано", "завершено"]],
+        isIn: [
+          [
+            "дані заповнено",
+            "очікується",
+            "підтверджено",
+            "скасовано",
+            "завершено",
+          ],
+        ],
       },
     },
     last_modified: {

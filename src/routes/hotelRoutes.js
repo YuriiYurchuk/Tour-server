@@ -4,7 +4,6 @@ const hotelCreateController = require("../controllers/hotel/hotelCreateControlle
 const hotelDeleteController = require("../controllers/hotel/hotelDeleteController");
 const hotelReviewsController = require("../controllers/hotel/hotelReviewsController");
 const getAllHotelsController = require("../controllers/hotel/getHotelsController");
-const deleteRoomGallery = require("../controllers/hotel/deleteRoomGallery");
 const hotelUpdateController = require("../controllers/hotel/hotelUpdateController");
 const getHotelDetails = require("../controllers/hotel/getHotelDetails");
 const authenticateToken = require("../middlewares/authMiddleware");
@@ -18,8 +17,8 @@ router.post(
     { name: "gallery", maxCount: 10 },
     { name: "roomType", maxCount: 5 },
   ]),
-  // authenticateToken,
-  // checkManagerRole,
+  authenticateToken,
+  checkManagerRole,
   hotelCreateController.createHotel
 );
 
@@ -33,14 +32,6 @@ router.put(
   authenticateToken,
   checkManagerRole,
   hotelUpdateController.updateHotel
-);
-
-// Видалення фото або кімнати готелю
-router.delete(
-  "/delete-room-or-gallery/:hotelId",
-  authenticateToken,
-  checkManagerRole,
-  deleteRoomGallery.deleteHotelData
 );
 
 // Видалення готелю
