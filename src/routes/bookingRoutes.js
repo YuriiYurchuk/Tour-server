@@ -18,7 +18,7 @@ router.get(
 );
 
 router.get(
-  "/:booking_id",
+  "/details-client/:booking_id",
   authMiddleware,
   getBookingUser.getSingleBookingWithConfirmation
 );
@@ -39,14 +39,6 @@ router.patch(
   bookingController.cancelBooking
 );
 
-// Відфільтровані букінги за статусом
-router.get(
-  "/",
-  authMiddleware,
-  checkManagerRole,
-  bookingController.getBookingsByStatus
-);
-
 // Заповнення даних букінгу
 router.post(
   "/details/:booking_id",
@@ -57,9 +49,17 @@ router.post(
 // Отримання даних букінгу
 router.get(
   "/details/:booking_id",
-  checkManagerRole,
   authMiddleware,
+  checkManagerRole,
   bookingDataController.getBookingDetails
+);
+
+// Отримання всіх букінгів
+router.get(
+  "/all",
+  authMiddleware,
+  checkManagerRole,
+  bookingController.getAllBookings
 );
 
 module.exports = router;

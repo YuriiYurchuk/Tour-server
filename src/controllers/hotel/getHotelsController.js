@@ -58,6 +58,9 @@ const buildFilters = (query, isHotDeal = null) => {
       filters.amenity = { [Op.overlap]: amenitiesArray };
     }
   }
+  if (query.name) {
+    filters.name = { [Op.iLike]: `%${query.name}%` };
+  }
 
   Object.keys(filters).forEach((key) => {
     if (

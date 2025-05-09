@@ -146,55 +146,6 @@ const createBooking = async (req, res) => {
   }
 };
 
-const getBookingsByStatus = async (req, res) => {
-  try {
-    const { status } = req.query; // Отримання статусу з параметрів запиту
-
-    logger.info("Отримання бронювань за статусом", { status });
-
-    // Перевірка, чи передано статус
-    if (!status) {
-      logger.warn("Не передано статус для фільтрації");
-      return res.status(400).json({
-        message: "Будь ласка, вкажіть статус для фільтрації",
-      });
-    }
-
-    // Пошук бронювань за вказаним статусом
-    const bookings = await Booking.findAll({
-      where: { status },
-      include: [{ model: BookingChildren, as: "children" }],
-    });
-
-    // Перевірка, чи знайдено бронювання
-    if (bookings.length === 0) {
-      logger.info("Бронювань з вказаним статусом не знайдено", { status });
-      return res.status(404).json({
-        message: `Бронювань зі статусом "${status}" не знайдено`,
-      });
-    }
-
-    logger.info("Бронювання успішно отримано", {
-      status,
-      count: bookings.length,
-    });
-
-    res.status(200).json({
-      message: "Бронювання отримано успішно",
-      data: bookings,
-    });
-  } catch (error) {
-    logger.error("Помилка при отриманні бронювань за статусом", {
-      error: error.message,
-    });
-
-    res.status(500).json({
-      message: "Не вдалося отримати бронювання",
-      error: error.message,
-    });
-  }
-};
-
 const changeBookingStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -253,9 +204,55 @@ const cancelBooking = async (req, res) => {
   }
 };
 
+const getAllBookings = async (req, res) => {
+  try {
+    logger.info("Отримання бронювань з пагінацією та фільтром");
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const { status } = req.query;
+
+    const whereClause = status ? { status } : {};
+
+    const { count, rows: bookings } = await Booking.findAndCountAll({
+      where: whereClause,
+      limit,
+      offset,
+    });
+
+    logger.info("Бронювання успішно отримано", {
+      count,
+      page,
+      limit,
+      status: status || "усі",
+    });
+
+    res.status(200).json({
+      message: "Список бронювань успішно отримано",
+      data: bookings,
+      pagination: {
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+        limit,
+      },
+    });
+  } catch (error) {
+    logger.error("Помилка при отриманні бронювань", {
+      error: error.message,
+    });
+
+    res.status(500).json({
+      message: "Не вдалося отримати бронювання",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
-  getBookingsByStatus,
   changeBookingStatus,
   cancelBooking,
+  getAllBookings,
 };
