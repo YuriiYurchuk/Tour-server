@@ -99,4 +99,19 @@ const deleteContactForm = async (req, res) => {
   }
 };
 
-module.exports = { createContactForm, deleteContactForm };
+const getAllContactForms = async (req, res) => {
+  try {
+    const contactForms = await ContactForm.findAll({
+      order: [["created_at", "DESC"]],
+    });
+
+    res.status(200).json(contactForms);
+  } catch (error) {
+    logger.error(`Помилка при отриманні контактних форм: ${error.message}`);
+    res.status(500).json({
+      error: "Не вдалося отримати контактні форми",
+    });
+  }
+};
+
+module.exports = { createContactForm, deleteContactForm, getAllContactForms };

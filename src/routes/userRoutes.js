@@ -41,11 +41,19 @@ router.post("/restore", authenticateToken, accountController.restoreUser);
 router.post("/contact", contactController.createContactForm);
 
 // Маршрут для видалення даних з контактної форми
-router.post(
-  "/delete-contact",
+router.delete(
+  "/contact/:id",
   authenticateToken,
   checkManagerRole,
   contactController.deleteContactForm
+);
+
+// Маршрут отримання всі контактів
+router.get(
+  "/contacts",
+  authenticateToken,
+  checkManagerRole,
+  contactController.getAllContactForms
 );
 
 module.exports = router;
