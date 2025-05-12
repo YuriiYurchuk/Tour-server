@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 // Роут для створення нового відгуку
 router.post(
   "/create",
-  // authMiddleware,
+  authMiddleware,
   reviewsCompanyController.createCompanyReview
 );
 
